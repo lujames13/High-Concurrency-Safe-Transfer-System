@@ -1,12 +1,21 @@
 #include "bank.h"
 #include <stddef.h>
 
-Account* init_bank_shm() {
-    // TODO: Implement SHM initialization
+Account* bank_shm_init() {
+    // TODO: Member 2 implements this
     return NULL;
 }
 
-int transfer(Account* accounts, int src, int dst, int amount) {
-    // TODO: Implement transfer logic
-    return 0;
+void bank_shm_cleanup() {
+    // TODO: Member 2 implements this
+}
+
+int bank_transfer(Account* table, int src_id, int dst_id, int amount) {
+    // TODO: Member 2 implements this
+    return -1;
+}
+
+int bank_get_balance(Account* table, int id) {
+    // TODO: Member 2 implements this
+    return -1;
 }

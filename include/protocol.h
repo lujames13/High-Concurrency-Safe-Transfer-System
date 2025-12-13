@@ -20,4 +20,40 @@ typedef struct {
     uint32_t body_len; // Length of Body
 } __attribute__((packed)) PacketHeader;
 
-#endif
+// Transfer Body
+typedef struct {
+    int src_id;
+    int dst_id;
+    int amount;
+} __attribute__((packed)) TransferBody;
+
+// ============================================================================
+// Protocol Helper API (Implemented in src/common/protocol.c)
+// ============================================================================
+
+/**
+ * @brief Read a full packet from the socket.
+ * 
+ * Behavior:
+ * 1. Read Header (blocking).
+ * 2. Validate Magic Byte.
+ * 3. Read Body (if body_len > 0).
+ * 4. Verify Checksum.
+ * 
+ * @param fd Socket file descriptor.
+ * @param header Pointer to store the read header.
+ * @param body Pointer to store the read body (caller must free).
+ * @return 0 on success, -1 on error/disconnect.
+ */
+int protocol_read_packet(int fd, PacketHeader* header, void** body);
+
+/**
+ * @brief Send a response packet.
+ * 
+ * @param fd Socket file descriptor.
+ * @param op_code Operation code.
+ * @param ret_code Return code (e.g., 0 for success, -1 for error).
+ */
+void protocol_send_response(int fd, uint8_t op_code, int ret_code);
+
+#endif // PROTOCOL_H
