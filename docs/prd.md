@@ -4,7 +4,7 @@
 
 ### 1.1 Core Constraints
 
-- **Max Concurrent Connections:** 10 (Throttled by Semaphore)
+- **Max Concurrent Connections:** 100 (Throttled by Semaphore/Process Pool)
 - **Max Accounts:** 100 (ID: 0-99)
 - **Initial Balance:** 1000 per account
 - **IPC Keys:**
@@ -17,6 +17,11 @@
 - **Language:** C99 Standard
 - **Error Handling:** All system calls (`shm_open`, `sem_wait`, `send`, `recv`) must check return values and handle `EINTR`
 - **Endianness:** Network Byte Order (Big Endian) for all packet headers
+
+### 1.3 Architecture Components
+
+- **Client:** Multi-threaded architecture (pthread) to simulate high concurrency (100+ connections).
+- **Shared Library:** Common modules (Protocol, IPC wrappers, Utils) must be encapsulated in a static (`.a`) or dynamic (`.so`) library.
 
 ---
 
@@ -85,3 +90,14 @@ To prevent deadlock when Account A transfers to B while B transfers to A:
 1. Worker pushes `LogStruct` to Message Queue (Non-blocking)
 2. Logger Process pops `LogStruct` (Blocking)
 3. Logger writes to `transaction.log` with Timestamp
+
+### 4.3 Reliability & Fault Tolerance
+
+**Owner:** Server Main Process
+
+- **Graceful Shutdown:**
+  - Catch `SIGINT` (Ctrl+C) and `SIGTERM`.
+  - **Action:**
+    1. Broadcast shutdown signal to workers.
+    2. Wait for active transactions to complete (optional) or force close.
+    3. **CRITICAL:** Unlink/Remove all IPC resources (SHM, Semaphores, Message Queues) to prevent resource leaks.
