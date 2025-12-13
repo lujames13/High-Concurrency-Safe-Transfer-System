@@ -43,14 +43,16 @@ graph TD
 ### Prerequisites
 
 - GCC / Clang
-- Make
+- CMake (3.10+)
 - Linux Environment (Ubuntu/WSL2 recommended)
 
 ### Compilation
 
 ```bash
-make clean
-make all
+mkdir -p build
+cd build
+cmake ..
+make
 ```
 
 ### Running the System
@@ -58,24 +60,69 @@ make all
 **1. Start the Server:**
 
 ```bash
-./server
+./bin/server
 # The server will initialize SHM, Semaphores, and listen on Port 8080.
 ```
 
 **2. Run the Client (Interactive Mode):**
 
 ```bash
-./client
+./bin/client
 ```
 
 **3. Run Stress Test (Auto Mode):**
 
 ```bash
-./client --stress
+./bin/client --stress
 # Launches 100 threads to simulate high-concurrency transfers.
 ```
 
 ---
+
+## Development Workflow
+
+To ensure code stability, please follow this workflow for development and testing.
+
+### 1. Build Environment Setup
+
+We use `cmake` for build management. Always perform builds in the `build/` directory.
+
+```bash
+# 1. Create build directory
+mkdir -p build
+cd build
+
+# 2. Generate Makefiles
+cmake ..
+
+# 3. Compile
+make
+```
+
+### 2. Testing Your Changes
+
+Before pushing code, run the relevant unit tests found in the `bin/` directory.
+
+**For Bank Core Logic (ACID/Transactions):**
+```bash
+./bin/test_bank
+```
+
+**For Logger & IPC:**
+```bash
+./bin/test_logger
+```
+
+### 3. Clean Rebuild
+
+If you modify `CMakeLists.txt` or add new source files, perform a clean build:
+
+```bash
+rm -rf build/*
+cd build
+cmake ..
+make
+```
 
 ## Team Roles & Contributions
 
