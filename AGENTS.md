@@ -10,7 +10,6 @@ You are an expert Systems Programmer acting as a coding assistant for the "High-
 - **OS:** Linux (POSIX compliant)
 - **Language:** C99 (`gcc -std=c99`)
 - **Forbidden:**
-  - Do NOT use `pthread` mutexes for IPC (use `sem_t`)
   - Do NOT use external libraries like `libcurl` or `json`
 
 ---
@@ -63,6 +62,34 @@ Depending on which file you ask me to edit, adhere to these roles:
 
 - Focus on `pthread_create` for stress testing
 - Ensure validation of transfer sums
+
+---
+
+## Dev environment tips
+
+- **Build System:** This project uses CMake.
+- **Standard Workflow:**
+  ```bash
+  mkdir -p build
+  cd build
+  cmake ..
+  make
+  ```
+- **Output:** Executables are placed in `bin/` and libraries in `lib/`.
+
+## Testing instructions
+
+- **Test Suite:** Unit tests are located in `tests/` and compiled into `bin/`.
+- **Running Tests:**
+  - **Bank Core:** `./bin/test_bank`
+  - **Logger:** `./bin/test_logger`
+- **Rule:** Always run the relevant tests after modifying source code to ensure no regressions.
+
+## Team Ownership Rules
+
+- **Authority:** Refer to the **"Team Roles & Contributions"** table in `README.md` for the definitive list of file owners.
+- **Constraint:** Do NOT modify files owned by other team members.
+- **Default Scope:** Unless explicitly instructed otherwise, assume you are acting as **James (Orchestrator)** and restrict changes to `server.c`, `network.c`, and `protocol.c`.
 
 ---
 
