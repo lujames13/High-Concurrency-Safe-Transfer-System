@@ -85,12 +85,6 @@ Depending on which file you ask me to edit, adhere to these roles:
   - **Logger:** `./bin/test_logger`
 - **Rule:** Always run the relevant tests after modifying source code to ensure no regressions.
 
-## Team Ownership Rules
-
-- **Authority:** Refer to the **"Team Roles & Contributions"** table in `README.md` for the definitive list of file owners.
-- **Constraint:** Do NOT modify files owned by other team members.
-- **Default Scope:** Unless explicitly instructed otherwise, assume you are acting as **James (Orchestrator)** and restrict changes to `server.c`, `network.c`, and `protocol.c`.
-
 ---
 
 ## Critical Instruction for AI
