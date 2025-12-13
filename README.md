@@ -38,6 +38,46 @@ graph TD
 
 ---
 
+## Project File Structure
+
+```text
+.
+├── AGENTS.md                  # AI Agent Rules
+├── CMakeLists.txt             # Root Build Configuration
+├── LICENSE
+├── README.md                  # Project Documentation
+├── bin/                       # [Generated] Output Executables
+├── build/                     # [Generated] Build Artifacts
+├── docs/
+│   ├── prd.md                 # Product Requirements Document
+│   └── project_spec.md        # Technical Specification
+├── include/                   # Header Files
+│   ├── bank.h                 # [Back Core] Banking Logic Interfaces
+│   ├── logger.h               # [Auditor] Logging Interfaces
+│   ├── protocol.h             # [Orchestrator] Protocol Definitions
+│   └── utils.h                # [Shared] Utility Functions
+├── lib/                       # [Generated] Output Libraries
+├── logs/                      # [Generated] Runtime Logs
+├── src/
+│   ├── client/
+│   │   ├── CMakeLists.txt
+│   │   └── main.c             # [QA/Tester] Client Application Entry Point
+│   ├── common/
+│   │   ├── CMakeLists.txt
+│   │   ├── mq_wrapper.c       # [Auditor] Message Queue Implementation
+│   │   ├── protocol.c         # [Orchestrator] Protocol Implementation
+│   │   └── shm_wrapper.c      # [Back Core] Shared Memory Implementation
+│   └── server/
+│       ├── CMakeLists.txt
+│       └── main.c             # [Orchestrator] Server Application Entry Point
+└── tests/
+    ├── CMakeLists.txt
+    ├── test_bank.c            # [Back Core] Bank Logic Tests
+    └── test_logger.c          # [Auditor] Logger Tests
+```
+
+---
+
 ## Build & Run
 
 ### Prerequisites
