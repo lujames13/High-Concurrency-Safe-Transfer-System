@@ -1,0 +1,38 @@
+name: C Build & Test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Dependencies
+      run: sudo apt-get update && sudo apt-get install -y cmake gcc make
+
+    - name: Configure CMake
+      run: mkdir -p build && cd build && cmake ..
+
+    - name: Build All Targets
+      run: cd build && make
+      # If someone misses a header include or has syntax errors, this will fail directly.
+      # 如果有人少 include 了 header 或語法錯誤，這裡直接 Fail
+
+    - name: Run Bank Core Tests
+      run: ./bin/test_bank
+      # Ensure bank core logic is not broken.
+      # 確保銀行核心邏輯沒被改壞
+
+    - name: Run Logger Tests
+      run: ./bin/test_logger
+      # Ensure Log system is normal.
+      # 確保 Log 系統正常
+
+    # Client/Server integration tests are harder to automate, ensure Unit Tests pass at least.
+    # Client/Server 整合測試較難自動化，至少先保證 Unit Test 通過
