@@ -66,7 +66,8 @@ graph TD
 │   │   ├── CMakeLists.txt
 │   │   ├── mq_wrapper.c       # [Auditor] Message Queue Implementation
 │   │   ├── protocol.c         # [Orchestrator] Protocol Implementation
-│   │   └── shm_wrapper.c      # [Back Core] Shared Memory Implementation
+│   │   ├── shm_wrapper.c      # [Back Core] Shared Memory Implementation
+|   |   └── logger.c           # [Auditor] Message Queue Implementation
 │   └── server/
 │       ├── CMakeLists.txt
 │       └── main.c             # [Orchestrator] Server Application Entry Point
