@@ -2,6 +2,7 @@ add_library(common STATIC
     protocol.c
     shm_wrapper.c
     mq_wrapper.c
+    logger.c
 )
 
 target_include_directories(common PUBLIC 
