@@ -15,7 +15,7 @@ typedef struct {
 } Account;
 
 // ============================================================================
-// Bank Core API (Implemented by Member 2 in src/common/shm_wrapper.c)
+// Bank Core API (Implemented in src/common/shm_wrapper.c)
 // ============================================================================
 
 /**
