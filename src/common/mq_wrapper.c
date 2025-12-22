@@ -9,20 +9,23 @@
 #include <unistd.h>     // usleep
 #include "../../include/logger.h" // 引用學長的合約
 
-
+// ==========================================
 // [安全性設定] XOR 加密模組
+// ==========================================
 #define ENCRYPTION_KEY 0xAB 
 
-// 加密模組
+// [修改] 為了適應 struct，我們改成對 "記憶體位元組" 進行加密
+// void* data: 可以接受任何型態的指標
+// size_t len: 要加密的長度 (bytes)
 void apply_xor_cipher(void *data, size_t len) {
     char *ptr = (char *)data; // 強制轉型成 byte 指標
     for (size_t i = 0; i < len; i++) {
         ptr[i] ^= ENCRYPTION_KEY;
     }
 }
+// ==========================================
 
-
-// 這些定義如果 logger.h 沒寫，這裡補上
+// 這些定義如果 logger.h 沒寫，我們這裡補上，確保能運作
 #ifndef MQ_KEY_FILE
 #define MQ_KEY_FILE "."
 #endif
@@ -30,8 +33,9 @@ void apply_xor_cipher(void *data, size_t len) {
 #define MQ_KEY_ID 65
 #endif
 
+// ----------------------------------------------------------------------------
 // 1. 初始化 Message Queue
-
+// ----------------------------------------------------------------------------
 int logger_mq_init() {
     key_t key = ftok(MQ_KEY_FILE, MQ_KEY_ID);
     if (key == -1) {
@@ -50,8 +54,9 @@ int logger_mq_init() {
     return mqid;
 }
 
-
+// ----------------------------------------------------------------------------
 // 2. 清理資源 (對應 logger.h 的 logger_mq_cleanup)
+// ----------------------------------------------------------------------------
 void logger_mq_cleanup(int mqid) {
     if (mqid != -1) {
         if (msgctl(mqid, IPC_RMID, NULL) == -1) {
@@ -62,8 +67,9 @@ void logger_mq_cleanup(int mqid) {
     }
 }
 
+// ----------------------------------------------------------------------------
 // 3. 非阻塞發送 (對應 logger.h 的 logger_send_async)
-
+// ----------------------------------------------------------------------------
 void logger_send_async(int mqid, int type, int status, int src, int dst, int amt) {
     LogMessage msg;
     
