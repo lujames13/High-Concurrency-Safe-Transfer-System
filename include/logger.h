@@ -1,6 +1,10 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+// Enable POSIX features
+#define _POSIX_C_SOURCE 200809L
+#define _XOPEN_SOURCE 700
+
 // ============================================================================
 // Auditor API (Implemented by Member 3 in src/common/mq_wrapper.c)
 // ============================================================================

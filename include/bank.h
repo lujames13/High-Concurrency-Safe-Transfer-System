@@ -1,78 +1,60 @@
 #ifndef BANK_H
 #define BANK_H
 
+// Enable POSIX features for pthread_rwlock_t, sem_t, etc.
+#define _POSIX_C_SOURCE 200809L
+#define _XOPEN_SOURCE 700
+
+#include <pthread.h>
 #include <semaphore.h>
 #include <stdint.h>
 
 #define MAX_ACCOUNTS 100
-#define SHM_NAME "/hsts_shm"
+#define SHM_NAME "/hsts_bank_core"
 
+// [新增] 定義最大並發數 (Semaphore 上限)
+// 方便之後在 shm_manager.c 的 sem_init 使用
+#define MAX_CONCURRENCY 10 
+
+// Error Codes (給 Server/Client 用)
+#define BANK_OK              0
+#define BANK_ERR_INTERNAL   -1
+#define BANK_ERR_INVALID_ID -2
+#define BANK_ERR_SAME_ACCOUNT -3
+#define BANK_ERR_INVALID_AMOUNT -4
+#define BANK_ERR_INSUFFICIENT -5
+#define BANK_ERR_BUSY       -6
+
+// Account Structure (Cache Line Aligned)
+// padding 用來避免 False Sharing，這在高併發寫入時非常重要
 typedef struct {
-    int id;
-    int balance;
-    sem_t lock;
-    char last_update[32];
+    uint32_t id;
+    int32_t  balance;
+    pthread_mutex_t lock;
+    uint64_t last_updated;
+    char padding[8]; 
 } Account;
 
-// ============================================================================
-// Bank Core API (Implemented by Member 2 in src/common/shm_wrapper.c)
-// ============================================================================
+// Bank Map Structure
+typedef struct {
+    uint32_t is_initialized;
+    volatile uint64_t total_transactions;
+    sem_t limit_sem;
+    pthread_rwlock_t bank_lock;
+    Account accounts[MAX_ACCOUNTS];
+} BankMap;
 
-/**
- * @brief Initialize Shared Memory and Semaphores.
- * 
- * Behavior:
- * 1. shm_open() with O_CREAT | O_RDWR.
- * 2. ftruncate() to set size.
- * 3. mmap() to map memory.
- * 4. If created (O_CREAT), initialize all accounts (balance=1000) and semaphores.
- * 5. If exists, just attach.
- * 
- * @return Pointer to the Account table in Shared Memory.
- */
-Account* bank_shm_init();
+// Public API
+int bank_init();
 
-/**
- * @brief Cleanup Shared Memory resources.
- * 
- * Behavior:
- * 1. munmap() the memory.
- * 2. shm_unlink() to remove the object.
- * 3. sem_close() and sem_unlink() for all semaphores.
- * CRITICAL: Must be called on server shutdown (SIGINT).
- */
-void bank_shm_cleanup();
+// [新增] 給 Client (Worker) 使用：只斷開連結，不刪除檔案
+int bank_detach(); 
 
-/**
- * @brief Execute a safe transfer between accounts.
- * 
- * Behavior:
- * 1. Validate IDs.
- * 2. Deadlock Prevention: Lock mutexes in ID order (min_id -> max_id).
- * 3. Check balance (src >= amount).
- * 4. Update balances.
- * 5. Unlock mutexes.
- * 
- * @param table Pointer to SHM account table.
- * @param src_id Source Account ID.
- * @param dst_id Destination Account ID.
- * @param amount Amount to transfer.
- * @return 0 on success, -1 if insufficient funds, -2 if invalid ID.
- */
-int bank_transfer(Account* table, int src_id, int dst_id, int amount);
+// 給 Server (Master) 使用：斷開並刪除檔案
+int bank_destroy();
 
-/**
- * @brief Get the balance of an account safely.
- * 
- * Behavior:
- * 1. Lock the specific account.
- * 2. Read balance.
- * 3. Unlock.
- * 
- * @param table Pointer to SHM account table.
- * @param id Account ID.
- * @return Current balance or -1 if invalid ID.
- */
-int bank_get_balance(Account* table, int id);
+BankMap* get_bank_map();
+int bank_transfer(int src_id, int dst_id, int amount);
+int bank_get_balance(int account_id, int *balance);
 
-#endif // BANK_H
+#endif

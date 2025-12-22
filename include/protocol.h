@@ -1,6 +1,10 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
+// Enable POSIX features
+#define _POSIX_C_SOURCE 200809L
+#define _XOPEN_SOURCE 700
+
 #include <stdint.h>
 
 // Magic Byte
