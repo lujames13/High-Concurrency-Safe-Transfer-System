@@ -215,8 +215,6 @@ Avg Latency: 0.00 ms
 Throughput: 2409.64 req/s
 ```
 
-![Stress Test Results](docs/screenshots/benchmark_stress_test.png)
-
 **Analysis:**
 - ✅ **Zero Transaction Loss:** All 1,000 requests completed successfully
 - ✅ **Sub-millisecond Latency:** Average response time < 1ms
@@ -308,14 +306,6 @@ cd build && cmake .. && make
 ```
 
 ---
-
-### Screenshots
-
-#### Stress Test Output
-![Client Stress Test](docs/screenshots/client_stress_test.png)
-
-#### Server Load Dashboard
-![Server Dashboard](docs/screenshots/server_dashboard.png)
 
 #### Transaction Log Sample
 ```log
